@@ -34,7 +34,10 @@ class TasksController < ApplicationController
 
   def destroy
     @task.destroy
-    redirect_to tasks_path, notice: '¡Tarea eliminada exitosamente!'
+    respond_to do |format|
+      format.html { redirect_to tasks_path, notice: '¡Tarea eliminada exitosamente!' }
+      format.turbo_stream
+    end
   end
 
   private

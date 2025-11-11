@@ -4,6 +4,10 @@ Rails.application.routes.draw do
   post 'login', to: 'sessions#create'
   delete 'logout', to: 'sessions#destroy'
 
+  # Registro de usuarios
+  resources :users, only: [:new, :create]
+  get 'signup', to: 'users#new'
+
   # Rutas para tasks
   resources :tasks
 

@@ -1,35 +1,99 @@
-<div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Mis Tareas</h1>
-    <%= link_to 'Nueva Tarea', new_task_path, class: 'btn btn-primary' %>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Mis Tareas</h1>
+  <%= link_to 'Nueva Tarea', new_task_path, class: 'btn btn-primary' %>
+</div>
+
+<div class="row">
+  <div class="col-md-3">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">Filtros</h5>
+      </div>
+      <div class="card-body">
+        <%= link_to 'Todas', tasks_path, class: 'btn btn-outline-primary btn-sm mb-2' %>
+        <%= link_to 'Pendientes', tasks_path(status: 'pending'), class: 'btn btn-outline-warning btn-sm mb-2' %>
+        <%= link_to 'En Progreso', tasks_path(status: 'in_progress'), class: 'btn btn-outline-info btn-sm mb-2' %>
+        <%= link_to 'Completadas', tasks_path(status: 'completed'), class: 'btn btn-outline-success btn-sm mb-2' %>
+      </div>
+      <div class="card-header">
+        <h6 class="card-title mb-0">Prioridad</h6>
+      </div>
+      <div class="card-body">
+        <%= link_to 'Alta', tasks_path(priority: 'high'), class: 'btn btn-outline-danger btn-sm mb-2' %>
+        <%= link_to 'Media', tasks_path(priority: 'medium'), class: 'btn btn-outline-warning btn-sm mb-2' %>
+        <%= link_to 'Baja', tasks_path(priority: 'low'), class: 'btn btn-outline-secondary btn-sm mb-2' %>
+      </div>
+    </div>
   </div>
 
-  <% if @tasks.any? %>
-    <div class="row">
-      <% @tasks.each do |task| %>
-        <div class="col-md-6 mb-3">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title"><%= task.title %></h5>
-              <p class="card-text"><%= task.description %></p>
-              <p class="card-text">
-                <small class="text-muted">
-                  Vence: <%= task.due_date.strftime("%d/%m/%Y %H:%M") %>
-                </small>
-              </p>
-              <span class="badge bg-<%= task.status == 'completed' ? 'success' : 'warning' %>">
-                <%= task.status %>
-              </span>
+  <div class="col-md-9">
+    <% if @tasks.any? %>
+      <div class="row">
+        <% @tasks.each do |task| %>
+          <div id="<%= dom_id(task) %>" class="col-md-6 mb-3">
+            <div class="card <%= 'border-danger' if task.overdue? %>">
+              <div class="card-body">
+                <h5 class="card-title">
+                  <%= task.title %>
+                  <span class="badge bg-<%= task_status_badge(task.status) %> float-end">
+                    <%= task.status.humanize %>
+                  </span>
+                  <!-- BADGE DE PRIORIDAD AGREGADO -->
+                  <span class="badge bg-<%= task_priority_badge(task.priority) %> me-1">
+                    <%= task.priority.humanize %>
+                  </span>
+                </h5>
+                
+                <p class="card-text text-muted small">
+                  <%= task.description.truncate(100) if task.description.present? %>
+                </p>
+                
+                <div class="d-flex justify-content-between align-items-center">
+                  <small class="text-muted">
+                    <i class="bi bi-calendar"></i>
+                    <%= l(task.due_date, format: :short) %>
+                    <% if task.overdue? %>
+                      <span class="badge bg-danger">Vencida</span>
+                    <% end %>
+                  </small>
+                  <div>
+                    <%= link_to 'Ver', task_path(task), class: 'btn btn-sm btn-outline-success' %>
+                    <%= link_to 'Editar', edit_task_path(task), class: 'btn btn-sm btn-outline-primary' %>
+                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteTaskModal-<%= task.id %>">
+                      Eliminar
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      <% end %>
-    </div>
-  <% else %>
-    <div class="text-center py-5">
-      <h3 class="text-muted">No hay tareas</h3>
-      <p class="text-muted">¡Crea tu primera tarea!</p>
-      <%= link_to 'Crear Tarea', new_task_path, class: 'btn btn-primary' %>
-    </div>
-  <% end %>
+          <!-- Modal de confirmación de eliminación -->
+          <div class="modal fade" id="deleteTaskModal-<%= task.id %>" tabindex="-1" aria-labelledby="deleteTaskModalLabel-<%= task.id %>" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="deleteTaskModalLabel-<%= task.id %>">Confirmar eliminación</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                  ¿Estás seguro de que quieres eliminar la tarea "<strong><%= task.title %></strong>"? Esta acción no se puede deshacer.
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  <%= button_to 'Eliminar', task_path(task), method: :delete, form: { data: { turbo_confirm: nil } }, class: 'btn btn-danger' %>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="text-center py-5">
+        <i class="bi bi-check-circle-fill text-muted" style="font-size: 3rem;"></i>
+        <h3 class="text-muted mt-3">No hay tareas</h3>
+        <p class="text-muted">¡Crea tu primera tarea!</p>
+        <%= link_to 'Crear Tarea', new_task_path, class: 'btn btn-primary' %>
+      </div>
+    <% end %>
+  </div>
 </div>

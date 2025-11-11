@@ -1,2 +1,87 @@
-<h1>Tasks#show</h1>
-<p>Find me in app/views/tasks/show.html.erb</p>
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <h2 class="card-title mb-0"><%= @task.title %></h2>
+          <span class="badge bg-<%= task_status_badge(@task.status) %>">
+            <%= @task.status.humanize %>
+          </span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="mb-4">
+          <h5 class="text-muted">Descripción</h5>
+          <p class="card-text"><%= @task.description.presence || "Sin descripción" %></p>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <h5 class="text-muted">Prioridad</h5>
+              <span class="badge bg-<%= @task.priority == 'high' ? 'danger' : (@task.priority == 'medium' ? 'warning' : 'secondary') %>">
+                <%= @task.priority.humanize %>
+              </span>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <h5 class="text-muted">Fecha de Vencimiento</h5>
+              <p class="<%= 'text-danger fw-bold' if @task.overdue? %>">
+                <i class="bi bi-calendar"></i>
+                <%= l(@task.due_date, format: :long) %>
+                <% if @task.overdue? %>
+                  <span class="badge bg-danger">VENCIDA</span>
+                <% end %>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <h5 class="text-muted">Creada</h5>
+              <p><i class="bi bi-clock"></i> <%= time_ago_in_words(@task.created_at) %> atrás</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <h5 class="text-muted">Última actualización</h5>
+              <p><i class="bi bi-arrow-clockwise"></i> <%= time_ago_in_words(@task.updated_at) %> atrás</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="d-flex justify-content-between">
+          <%= link_to '← Volver a Tareas', tasks_path, class: 'btn btn-secondary' %>
+          <div>
+            <%= link_to 'Editar', edit_task_path(@task), class: 'btn btn-outline-primary me-2' %>
+            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteTaskModal-<%= @task.id %>">
+              Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal de confirmación de eliminación -->
+  <div class="modal fade" id="deleteTaskModal-<%= @task.id %>" tabindex="-1" aria-labelledby="deleteTaskModalLabel-<%= @task.id %>" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteTaskModalLabel-<%= @task.id %>">Confirmar eliminación</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          ¿Estás seguro de que quieres eliminar la tarea "<strong><%= @task.title %></strong>"? Esta acción no se puede deshacer.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <%= button_to 'Eliminar', task_path(@task), method: :delete, form: { data: { turbo_confirm: nil } }, class: 'btn btn-danger' %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

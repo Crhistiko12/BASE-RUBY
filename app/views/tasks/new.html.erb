@@ -1,2 +1,59 @@
-<h1>Tasks#new</h1>
-<p>Find me in app/views/tasks/new.html.erb</p>
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title mb-0">Nueva Tarea</h2>
+      </div>
+      <div class="card-body">
+        <%= form_with model: @task, local: true do |form| %>
+          <% if @task.errors.any? %>
+            <div class="alert alert-danger">
+              <h4><%= pluralize(@task.errors.count, "error") %> impiden guardar esta tarea:</h4>
+              <ul>
+                <% @task.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <div class="mb-3">
+            <%= form.label :title, "Título", class: "form-label" %>
+            <%= form.text_field :title, class: "form-control", required: true %>
+          </div>
+
+          <div class="mb-3">
+            <%= form.label :description, "Descripción", class: "form-label" %>
+            <%= form.text_area :description, class: "form-control", rows: 4 %>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <%= form.label :due_date, "Fecha de Vencimiento", class: "form-label" %>
+                <%= form.datetime_local_field :due_date, class: "form-control", required: true %>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="mb-3">
+                <%= form.label :priority, "Prioridad", class: "form-label" %>
+                <%= form.select :priority, Task.priorities.keys.map { |p| [p.humanize, p] }, {}, class: "form-select" %>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="mb-3">
+                <%= form.label :status, "Estado", class: "form-label" %>
+                <%= form.select :status, Task.statuses.keys.map { |s| [s.humanize, s] }, {}, class: "form-select" %>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between">
+            <%= link_to 'Cancelar', tasks_path, class: 'btn btn-secondary' %>
+            <%= form.submit "Crear Tarea", class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
