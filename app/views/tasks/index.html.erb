@@ -11,9 +11,9 @@
       </div>
       <div class="card-body">
         <%= link_to 'Todas', tasks_path, class: 'btn btn-outline-primary btn-sm mb-2' %>
-        <%= link_to 'Pendientes', tasks_path(status: 'pending'), class: 'btn btn-outline-warning btn-sm mb-2' %>
-        <%= link_to 'En Progreso', tasks_path(status: 'in_progress'), class: 'btn btn-outline-info btn-sm mb-2' %>
-        <%= link_to 'Completadas', tasks_path(status: 'completed'), class: 'btn btn-outline-success btn-sm mb-2' %>
+        <%= link_to 'Pendientes', tasks_path(status: 'pendiente'), class: 'btn btn-outline-warning btn-sm mb-2' %>
+        <%= link_to 'En Progreso', tasks_path(status: 'en_progreso'), class: 'btn btn-outline-info btn-sm mb-2' %>
+        <%= link_to 'Completadas', tasks_path(status: 'completado'), class: 'btn btn-outline-success btn-sm mb-2' %>
       </div>
       <div class="card-header">
         <h6 class="card-title mb-0">Prioridad</h6>
@@ -60,7 +60,7 @@
                     <%= link_to 'Ver', task_path(task), class: 'btn btn-sm btn-outline-success' %>
                     <%= link_to 'Editar', edit_task_path(task), class: 'btn btn-sm btn-outline-primary' %>
                     <% unless task.completed? %>
-                      <%= button_to 'Completada', task_path(task, task: { status: 'completed' }), method: :patch, class: 'btn btn-sm btn-success', form: { data: { turbo_confirm: '¿Marcar como completada?' } } %>
+                      <%= button_to 'Completada', task_path(task, task: { status: 'completado' }), method: :patch, class: 'btn btn-sm btn-success', form: { data: { turbo_confirm: '¿Marcar como completada?' } } %>
                     <% end %>
                     <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteTaskModal-<%= task.id %>">
                       Eliminar
