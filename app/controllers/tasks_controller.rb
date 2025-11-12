@@ -3,6 +3,13 @@ class TasksController < ApplicationController
 
   def index
     @tasks = current_user.tasks
+    # Filtros por estado y prioridad
+    if params[:status].present? && Task.statuses.key?(params[:status])
+      @tasks = @tasks.where(status: Task.statuses[params[:status]])
+    end
+    if params[:priority].present? && Task.priorities.key?(params[:priority])
+      @tasks = @tasks.where(priority: Task.priorities[params[:priority]])
+    end
   end
 
   def show

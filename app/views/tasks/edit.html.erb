@@ -37,7 +37,7 @@
             <div class="col-md-3">
               <div class="mb-3">
                 <%= form.label :priority, "Prioridad", class: "form-label" %>
-                <%= form.select :priority, Task.priorities.keys.map { |p| [p.humanize, p] }, {}, class: "form-select" %>
+                <%= form.select :priority, [["Alta", "high"], ["Media", "medium"], ["Baja", "low"]], {}, class: "form-select" %>
               </div>
             </div>
             <div class="col-md-3">

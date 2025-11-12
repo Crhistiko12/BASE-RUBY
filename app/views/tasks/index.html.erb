@@ -31,7 +31,7 @@
       <div class="row">
         <% @tasks.each do |task| %>
           <div id="<%= dom_id(task) %>" class="col-md-6 mb-3">
-            <div class="card <%= 'border-danger' if task.overdue? %>">
+            <div class="card <%= 'border-danger' if task.overdue? %> <%= 'border-success bg-success-subtle' if task.completed? %>">
               <div class="card-body">
                 <h5 class="card-title">
                   <%= task.title %>
@@ -40,7 +40,7 @@
                   </span>
                   <!-- BADGE DE PRIORIDAD AGREGADO -->
                   <span class="badge bg-<%= task_priority_badge(task.priority) %> me-1">
-                    <%= task.priority.humanize %>
+                    <%= spanish_priority_label(task.priority) %>
                   </span>
                 </h5>
                 
@@ -59,6 +59,9 @@
                   <div>
                     <%= link_to 'Ver', task_path(task), class: 'btn btn-sm btn-outline-success' %>
                     <%= link_to 'Editar', edit_task_path(task), class: 'btn btn-sm btn-outline-primary' %>
+                    <% unless task.completed? %>
+                      <%= button_to 'Completada', task_path(task, task: { status: 'completed' }), method: :patch, class: 'btn btn-sm btn-success', form: { data: { turbo_confirm: '¿Marcar como completada?' } } %>
+                    <% end %>
                     <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteTaskModal-<%= task.id %>">
                       Eliminar
                     </button>

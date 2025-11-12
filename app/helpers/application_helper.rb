@@ -1,9 +1,9 @@
 module ApplicationHelper
   def task_status_badge(status)
     case status
-    when 'pending' then 'warning'
-    when 'in_progress' then 'info'
-    when 'completed' then 'success'
+    when 'pendiente' then 'warning'
+    when 'en_progreso' then 'info'
+    when 'completado' then 'success'
     else 'secondary'
     end
   end
@@ -15,6 +15,15 @@ module ApplicationHelper
     when 'medium' then 'warning'
     when 'low' then 'secondary'
     else 'secondary'
+    end
+  end
+
+  def spanish_priority_label(priority)
+    case priority
+    when 'high' then 'Alta'
+    when 'medium' then 'Media'
+    when 'low' then 'Baja'
+    else priority.to_s
     end
   end
 end
