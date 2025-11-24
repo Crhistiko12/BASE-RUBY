@@ -1,0 +1,28 @@
+services:
+  # Web Service - Rails Application
+  - type: web
+    name: task-manager
+    runtime: ruby
+    plan: free
+    buildCommand: "./bin/render-build.sh"
+    startCommand: "bundle exec rails server -b 0.0.0.0 -p $PORT -e production"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: task-manager-db
+          property: connectionString
+      - key: RAILS_MASTER_KEY
+        sync: false
+      - key: RAILS_ENV
+        value: production
+      - key: RAILS_LOG_TO_STDOUT
+        value: enabled
+      - key: RAILS_SERVE_STATIC_FILES
+        value: enabled
+
+databases:
+  # PostgreSQL Database
+  - name: task-manager-db
+    plan: free
+    databaseName: task_manager_production
+    user: task_manager

@@ -5,7 +5,7 @@
         <h2 class="card-title mb-0">Editar Tarea</h2>
       </div>
       <div class="card-body">
-        <%= form_with model: @task, local: true do |form| %>
+        <%= form_with model: @task, local: true, html: { class: 'needs-validation', novalidate: true } do |form| %>
           <% if @task.errors.any? %>
             <div class="alert alert-danger">
               <h4><%= pluralize(@task.errors.count, "error") %> impiden guardar esta tarea:</h4>
@@ -19,7 +19,15 @@
 
           <div class="mb-3">
             <%= form.label :title, "Título", class: "form-label" %>
-            <%= form.text_field :title, class: "form-control", required: true %>
+            <%= form.text_field :title, 
+                class: "form-control #{'is-invalid' if @task.errors[:title].any?}", 
+                required: true,
+                placeholder: "Ej: Comprar víveres" %>
+            <% if @task.errors[:title].any? %>
+              <div class="invalid-feedback d-block">
+                <%= @task.errors[:title].first %>
+              </div>
+            <% end %>
           </div>
 
           <div class="mb-3">
@@ -31,19 +39,59 @@
             <div class="col-md-6">
               <div class="mb-3">
                 <%= form.label :due_date, "Fecha de Vencimiento", class: "form-label" %>
-                <%= form.datetime_local_field :due_date, class: "form-control", required: true %>
+                <%= form.datetime_local_field :due_date, 
+                    class: "form-control #{'is-invalid' if @task.errors[:due_date].any?}", 
+                    required: true,
+                    min: Time.current.strftime('%Y-%m-%dT%H:%M') %>
+                <% if @task.errors[:due_date].any? %>
+                  <div class="invalid-feedback d-block">
+                    <%= @task.errors[:due_date].first %>
+                  </div>
+                <% else %>
+                  <small class="form-text text-muted">Fecha y hora de vencimiento</small>
+                <% end %>
               </div>
             </div>
             <div class="col-md-3">
               <div class="mb-3">
                 <%= form.label :priority, "Prioridad", class: "form-label" %>
-                <%= form.select :priority, [["Alta", "high"], ["Media", "medium"], ["Baja", "low"]], {}, class: "form-select" %>
+                <%= form.select :priority, 
+                    [
+                      ['Alta', 'alta'], 
+                      ['Media', 'media'], 
+                      ['Baja', 'baja']
+                    ], 
+                    { selected: @task.priority || 'media' }, 
+                    { 
+                      class: "form-select #{'is-invalid' if @task.errors[:priority].any?}",
+                      required: true 
+                    } %>
+                <% if @task.errors[:priority].any? %>
+                  <div class="invalid-feedback d-block">
+                    <%= @task.errors[:priority].first %>
+                  </div>
+                <% end %>
               </div>
             </div>
             <div class="col-md-3">
               <div class="mb-3">
                 <%= form.label :status, "Estado", class: "form-label" %>
-                <%= form.select :status, Task.statuses.keys.map { |s| [s.humanize, s] }, {}, class: "form-select" %>
+                <%= form.select :status, 
+                    [
+                      ['Pendiente', 'pendiente'], 
+                      ['En progreso', 'en_progreso'], 
+                      ['Completado', 'completado']
+                    ], 
+                    { selected: @task.status || 'pendiente' }, 
+                    { 
+                      class: "form-select #{'is-invalid' if @task.errors[:status].any?}",
+                      required: true 
+                    } %>
+                <% if @task.errors[:status].any? %>
+                  <div class="invalid-feedback d-block">
+                    <%= @task.errors[:status].first %>
+                  </div>
+                <% end %>
               </div>
             </div>
           </div>

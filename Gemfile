@@ -43,6 +43,10 @@ gem "thruster", require: false
 gem "image_processing", "~> 1.2"
 
 # ⭐⭐ SOLO AÑADE ESTAS 3 LÍNEAS AL FINAL ⭐⭐
+group :development, :test do
+  gem 'dotenv-rails', '~> 2.8', '>= 2.8.1'
+end
+
 group :production do
   gem 'rails_12factor'
 end

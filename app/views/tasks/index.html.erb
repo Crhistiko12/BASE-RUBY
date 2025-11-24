@@ -19,9 +19,10 @@
         <h6 class="card-title mb-0">Prioridad</h6>
       </div>
       <div class="card-body">
-        <%= link_to 'Alta', tasks_path(priority: 'high'), class: 'btn btn-outline-danger btn-sm mb-2' %>
-        <%= link_to 'Media', tasks_path(priority: 'medium'), class: 'btn btn-outline-warning btn-sm mb-2' %>
-        <%= link_to 'Baja', tasks_path(priority: 'low'), class: 'btn btn-outline-secondary btn-sm mb-2' %>
+        <%= link_to 'Todas', tasks_path, class: "btn btn-sm mb-2 #{'btn-primary' if params[:priority].blank?}" %>
+        <%= link_to 'Alta', tasks_path(priority: 'alta'), class: "btn btn-sm mb-2 #{'btn-danger' if params[:priority] == 'alta'}" %>
+        <%= link_to 'Media', tasks_path(priority: 'media'), class: "btn btn-sm mb-2 #{'btn-warning' if params[:priority] == 'media'}" %>
+        <%= link_to 'Baja', tasks_path(priority: 'baja'), class: "btn btn-sm mb-2 #{'btn-secondary' if params[:priority] == 'baja'}" %>
       </div>
     </div>
   </div>
@@ -31,7 +32,7 @@
       <div class="row">
         <% @tasks.each do |task| %>
           <div id="<%= dom_id(task) %>" class="col-md-6 mb-3">
-            <div class="card <%= 'border-danger' if task.overdue? %> <%= 'border-success bg-success-subtle' if task.completed? %>">
+            <div class="card <%= 'border-danger' if task.overdue? %> <%= 'border-success bg-success-subtle' if task.status == 'completado' %>">
               <div class="card-body">
                 <h5 class="card-title">
                   <%= task.title %>

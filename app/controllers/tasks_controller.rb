@@ -3,13 +3,19 @@ class TasksController < ApplicationController
 
   def index
     @tasks = current_user.tasks
-    # Filtros por estado y prioridad
+    
+    # Filtrar por estado si está presente
     if params[:status].present? && Task.statuses.key?(params[:status])
-      @tasks = @tasks.where(status: Task.statuses[params[:status]])
+      @tasks = @tasks.where(status: params[:status])
     end
+    
+    # Filtrar por prioridad si está presente
     if params[:priority].present? && Task.priorities.key?(params[:priority])
-      @tasks = @tasks.where(priority: Task.priorities[params[:priority]])
+      @tasks = @tasks.where(priority: params[:priority])
     end
+    
+    # Ordenar por fecha de vencimiento por defecto
+    @tasks = @tasks.order(due_date: :asc)
   end
 
   def show
@@ -21,10 +27,16 @@ class TasksController < ApplicationController
 
   def create
     @task = current_user.tasks.new(task_params)
+    
+    # Set default values if not provided
+    @task.status ||= 'pendiente'
+    @task.priority ||= 'media'
+    
     if @task.save
       redirect_to tasks_path, notice: '¡Tarea creada exitosamente!'
     else
-      render :new
+      flash.now[:alert] = 'Por favor, corrige los siguientes errores:'
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -35,7 +47,8 @@ class TasksController < ApplicationController
     if @task.update(task_params)
       redirect_to tasks_path, notice: '¡Tarea actualizada exitosamente!'
     else
-      render :edit
+      flash.now[:alert] = 'Por favor, corrige los siguientes errores:'
+      render :edit, status: :unprocessable_entity
     end
   end
 
